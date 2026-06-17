@@ -1,8 +1,10 @@
 package com.orderflow.service;
 
 import com.orderflow.model.Entrega;
+import com.orderflow.model.HistoricoStatus;
 import com.orderflow.model.Pedido;
 import com.orderflow.repository.EntregaRepository;
+import com.orderflow.repository.HistoricoStatusRepository;
 import com.orderflow.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class EntregaService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private HistoricoStatusRepository historicoStatusRepository;
+
     // Registrar envio
     public Entrega registrarEnvio(Entrega entrega) {
 
@@ -31,6 +36,9 @@ public class EntregaService {
 
         pedido.setStatusAtual("ENVIADO");
         pedidoRepository.save(pedido);
+
+        // Regra de negócio: registrar histórico da mudança de status
+        registrarHistorico(entrega.getIdPedido(), "ENVIADO");
 
         return entregaRepository.save(entrega);
     }
@@ -49,6 +57,9 @@ public class EntregaService {
 
         pedido.setStatusAtual("ENTREGUE");
         pedidoRepository.save(pedido);
+
+        // Regra de negócio: registrar histórico da mudança de status
+        registrarHistorico(entrega.getIdPedido(), "ENTREGUE");
 
         return entregaRepository.save(entrega);
     }
@@ -77,5 +88,16 @@ public class EntregaService {
 
     public void deletar(Integer id) {
         entregaRepository.deleteById(id);
+    }
+
+    // Método auxiliar: registra histórico de status do pedido
+    private void registrarHistorico(Integer idPedido, String status) {
+
+        HistoricoStatus historico = new HistoricoStatus();
+        historico.setIdPedido(idPedido);
+        historico.setStatus(status);
+        historico.setDataHora(LocalDateTime.now());
+
+        historicoStatusRepository.save(historico);
     }
 }

@@ -1,7 +1,9 @@
 package com.orderflow.service;
 
+import com.orderflow.model.HistoricoStatus;
 import com.orderflow.model.Pagamento;
 import com.orderflow.model.Pedido;
+import com.orderflow.repository.HistoricoStatusRepository;
 import com.orderflow.repository.PagamentoRepository;
 import com.orderflow.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class PagamentoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private HistoricoStatusRepository historicoStatusRepository;
+
     // Registrar pagamento
     public Pagamento registrarPagamento(Pagamento pagamento) {
 
@@ -31,6 +36,9 @@ public class PagamentoService {
 
         pedido.setStatusAtual("EM_PREPARACAO");
         pedidoRepository.save(pedido);
+
+        // Regra de negócio: registrar histórico da mudança de status
+        registrarHistorico(pagamento.getIdPedido(), "EM_PREPARACAO");
 
         return pagamentoRepository.save(pagamento);
     }
@@ -62,5 +70,16 @@ public class PagamentoService {
     // Excluir
     public void deletar(Integer id) {
         pagamentoRepository.deleteById(id);
+    }
+
+    // Método auxiliar: registra histórico de status do pedido
+    private void registrarHistorico(Integer idPedido, String status) {
+
+        HistoricoStatus historico = new HistoricoStatus();
+        historico.setIdPedido(idPedido);
+        historico.setStatus(status);
+        historico.setDataHora(LocalDateTime.now());
+
+        historicoStatusRepository.save(historico);
     }
 }

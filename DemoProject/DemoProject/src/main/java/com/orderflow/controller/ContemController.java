@@ -28,6 +28,11 @@ public class ContemController {
         return contemService.buscarPorId(id);
     }
 
+    @GetMapping("/pedido/{idPedido}")
+    public List<Contem> listarPorPedido(@PathVariable Integer idPedido) {
+        return contemService.listarPorPedido(idPedido);
+    }
+
     @PutMapping("/{id}")
     public Contem atualizar(@PathVariable Integer id, @RequestBody Contem contem) {
         contem.setIdContem(id);
