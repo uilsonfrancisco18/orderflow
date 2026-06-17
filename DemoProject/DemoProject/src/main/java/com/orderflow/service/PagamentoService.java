@@ -45,6 +45,20 @@ public class PagamentoService {
         return pagamentoRepository.findById(id);
     }
 
+    // Atualizar pagamento
+    public Pagamento atualizar(Integer id, Pagamento pagamentoAtualizado) {
+
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
+
+        pagamento.setMetodoPagamento(pagamentoAtualizado.getMetodoPagamento());
+        pagamento.setValor(pagamentoAtualizado.getValor());
+        pagamento.setStatusPagamento(pagamentoAtualizado.getStatusPagamento());
+        pagamento.setIdPedido(pagamentoAtualizado.getIdPedido());
+
+        return pagamentoRepository.save(pagamento);
+    }
+
     // Excluir
     public void deletar(Integer id) {
         pagamentoRepository.deleteById(id);

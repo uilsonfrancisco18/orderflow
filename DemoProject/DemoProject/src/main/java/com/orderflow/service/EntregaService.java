@@ -61,6 +61,20 @@ public class EntregaService {
         return entregaRepository.findById(id);
     }
 
+    // Atualizar entrega
+    public Entrega atualizar(Integer id, Entrega entregaAtualizada) {
+
+        Entrega entrega = entregaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrega não encontrada"));
+
+        entrega.setCodigoRastreio(entregaAtualizada.getCodigoRastreio());
+        entrega.setTransporte(entregaAtualizada.getTransporte());
+        entrega.setStatusEntrega(entregaAtualizada.getStatusEntrega());
+        entrega.setIdPedido(entregaAtualizada.getIdPedido());
+
+        return entregaRepository.save(entrega);
+    }
+
     public void deletar(Integer id) {
         entregaRepository.deleteById(id);
     }

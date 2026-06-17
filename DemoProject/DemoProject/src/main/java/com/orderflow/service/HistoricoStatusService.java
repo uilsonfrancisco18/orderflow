@@ -33,6 +33,18 @@ public class HistoricoStatusService {
         return historicoStatusRepository.findById(id);
     }
 
+    // Atualizar histórico
+    public HistoricoStatus atualizar(Integer id, HistoricoStatus historicoAtualizado) {
+
+        HistoricoStatus historico = historicoStatusRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Histórico não encontrado"));
+
+        historico.setStatus(historicoAtualizado.getStatus());
+        historico.setIdPedido(historicoAtualizado.getIdPedido());
+
+        return historicoStatusRepository.save(historico);
+    }
+
     // Excluir
     public void deletar(Integer id) {
         historicoStatusRepository.deleteById(id);
